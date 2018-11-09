@@ -36,36 +36,40 @@ public class DirectedWeigthedGraph implements Graphs {
             vertexes[nVertex] = vertex;
             nVertex++;
         }
-        else throw new IllegalStateException();
+        else throw new IllegalStateException(); //Habria que agrandar los arreglos
     }
 
     @Override
-    public void addEdge(int a, int b, int cost) {
-        if (!containsEdge(a, b))
-            costMatrix[a][b] = costMatrix[b][a] = cost;
+    public void addEdge(int start, int end, int cost) {
+        if (!containsEdge(start, end))
+            costMatrix[start][end] = cost; //Directed graph so it only adds in one combination of a and b
         else throw new NoSuchElementException();
     }
 
     @Override
     public void removeVertex(Object v) {
-        if (!containsVertex(v))
+        int pos = getVertexPosition(v);
+        if (pos == -1)
             throw new NoSuchElementException();
-
 
     }
 
+    private int getVertexPosition(Object v) {
+        for (int i = 0; i < vertexes.length; i++) {
+            if (vertexes[i].equals(v))
+                return i;
+        }
+        return -1;
+    }
+
     @Override
-    public void removeEdge() {
+    public void removeEdge(int start, int end) {
 
     }
 
     @Override
     public boolean containsVertex(Object v) {
-        for (Object vertex : vertexes) {
-            if (v == vertex)
-                return true;
-        }
-        return false;
+        return getVertexPosition(v) != -1;
     }
 
     @Override
