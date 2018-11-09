@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -6,6 +9,7 @@ import java.util.NoSuchElementException;
  */
 
 public class DirectedWeigthedGraph implements Graphs {
+
     private Object [] vertexes;
     private int [][] costMatrix;
     private int capacity;
@@ -41,8 +45,10 @@ public class DirectedWeigthedGraph implements Graphs {
 
     @Override
     public void addEdge(int start, int end, int cost) {
-        if (!containsEdge(start, end))
-            costMatrix[start][end] = cost; //Directed graph so it only adds in one combination of a and b
+        if (!containsEdge(start, end)) {
+            costMatrix[start][end] = cost; //Directed graph -> so it only adds in one combination of a and b
+            nEdges++;
+        }
         else throw new NoSuchElementException();
     }
 
@@ -51,6 +57,19 @@ public class DirectedWeigthedGraph implements Graphs {
         int pos = getVertexPosition(v);
         if (pos == -1)
             throw new NoSuchElementException();
+        //Erase every track the vertex was involved in
+        for (int i = 0; i < costMatrix.length; i++) {
+
+            if (costMatrix[pos][i] != 0){
+                costMatrix[pos][i] = 0;
+                nEdges --;
+            }
+            if (costMatrix[i][pos] != 0){
+                costMatrix[i][pos] = 0;
+                nEdges --;
+            }
+        }
+        nVertex --;
 
     }
 
@@ -64,7 +83,9 @@ public class DirectedWeigthedGraph implements Graphs {
 
     @Override
     public void removeEdge(int start, int end) {
-
+        if (!containsEdge(start, end))
+            throw new NoSuchElementException();
+        costMatrix[start][end] = 0;
     }
 
     @Override
@@ -80,8 +101,18 @@ public class DirectedWeigthedGraph implements Graphs {
     }
 
     @Override
+    public List<Object> getVertexes() {
+        return Arrays.asList(vertexes);
+    }
+
+    @Override
+    public int edges() {
+        return nEdges;
+    }
+
+    @Override
     public int order() {
-        return 0;
+        return nVertex;
     }
 
 }
