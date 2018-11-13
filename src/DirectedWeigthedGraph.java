@@ -7,7 +7,7 @@ import java.util.*;
 
 public class DirectedWeigthedGraph implements Graphs {
 
-    private Object [] vertexes;
+    private List<Object> vertexes;
     private int [][] costMatrix;
     private int capacity;
     private int nVertex;
@@ -16,7 +16,7 @@ public class DirectedWeigthedGraph implements Graphs {
     //Default constructor, capacity = 10
     public DirectedWeigthedGraph() {
         this.capacity = 10;
-        this.vertexes = new Object[10];
+        this.vertexes = new ArrayList<>();
         this.costMatrix = new int[10][10];
         this.nVertex = 0;
         this.nEdges = 0;
@@ -29,7 +29,7 @@ public class DirectedWeigthedGraph implements Graphs {
 
     public DirectedWeigthedGraph(int capacity){
         this.capacity = capacity;
-        this.vertexes = new Object[capacity];
+        this.vertexes = new ArrayList<>();
         this.costMatrix = new int[capacity][capacity];
         this.nVertex = 0;
         this.nEdges = 0;
@@ -44,7 +44,7 @@ public class DirectedWeigthedGraph implements Graphs {
     @Override
     public void addVertex(Object vertex) {
         if (nVertex < capacity) {
-            vertexes[nVertex] = vertex;
+            vertexes.add(vertex);
             nVertex++;
         }
         else throw new IllegalStateException(); //Habria que agrandar los arreglos
@@ -76,12 +76,13 @@ public class DirectedWeigthedGraph implements Graphs {
                 nEdges --;
             }
         }
-        nVertex --;
+        vertexes.remove(v);
+        nVertex--;
     }
 
     private int getVertexPosition(Object v) {
-        for (int i = 0; i < vertexes.length; i++) {
-            if (vertexes[i].equals(v))
+        for (int i = 0; i < vertexes.size(); i++) {
+            if (vertexes.get(i).equals(v))
                 return i;
         }
         return -1;
@@ -91,7 +92,7 @@ public class DirectedWeigthedGraph implements Graphs {
     public void removeEdge(int start, int end) {
         if (!containsEdge(start, end))
             throw new NoSuchElementException();
-        costMatrix[start][end] = 0;
+        costMatrix[start][end] = Integer.MAX_VALUE;
     }
 
     @Override
@@ -101,9 +102,9 @@ public class DirectedWeigthedGraph implements Graphs {
 
     @Override
     public boolean containsEdge(int a, int b) {
-        if (vertexes[a] == null|| vertexes[b] == null)
+        if (vertexes.get(a) == null|| vertexes.get(b) == null)
             throw new IllegalArgumentException();
-        return costMatrix[a][b] != 0;
+        return costMatrix[a][b] != Integer.MAX_VALUE;
     }
 
     @Override
@@ -122,7 +123,7 @@ public class DirectedWeigthedGraph implements Graphs {
     }
 
     private Object getVertex(int v){
-        return vertexes[v];
+        return vertexes.get(v);
     }
 
     private Object[] getAdy(Object v){
@@ -135,7 +136,7 @@ public class DirectedWeigthedGraph implements Graphs {
     }
 
     public Iterator<Object> plainSearch(){
-        return Arrays.asList(vertexes).iterator();
+        return vertexes.iterator();
     }
 
     public Iterator<Object> DFS(Object starting_elem){
@@ -148,7 +149,7 @@ public class DirectedWeigthedGraph implements Graphs {
 
     private void DFS(int n, boolean[] visited, List<Object> list) {
         visited[n] = true;
-        list.add(vertexes[n]);
+        list.add(vertexes.get(n));
 
         for (int i = 0; i < costMatrix[n].length; i++) {
             int j = costMatrix[n][i];
@@ -169,7 +170,7 @@ public class DirectedWeigthedGraph implements Graphs {
         queue.push(sn);
         while (queue.size()!=0){
             sn = queue.poll();
-            list.add(vertexes[sn]);
+            list.add(vertexes.get(sn));
             for (int i = 0; i < costMatrix[sn].length; i++) {
                 int n = costMatrix[sn][i];
                 if(n<Integer.MAX_VALUE){
@@ -181,6 +182,31 @@ public class DirectedWeigthedGraph implements Graphs {
             }
         }
         return list.iterator();
+    }
+
+    public void graph() {
+        System.out.println("-------------------------------------");
+        System.out.println("La lista de los vertices es:");
+        String result = "";
+        for (Object vertex : vertexes) {
+            result+=vertex.toString()+"  ";
+        }
+        System.out.println(result+"\n");
+
+        System.out.println("La matriz de costo es:");
+
+        String space = "   ";
+        for (int i = 0; i < costMatrix.length; i++) {
+            for (int j = 0; j < costMatrix[i].length; j++) {
+                if(costMatrix[i][j]==Integer.MAX_VALUE){
+                    System.out.print("INF" + space);
+                }else{
+                    System.out.print(costMatrix[i][j] + space);
+                }
+            }
+            System.out.println();
+        }
+        System.out.println("-------------------------------------");
     }
 
     // Devuelve un nuevo arreglo con el costo nuevo de los vertices desde el origen asignado
