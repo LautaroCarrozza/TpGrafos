@@ -18,7 +18,6 @@ public class Graph2 {
         } else {
             System.out.println("Source vertex not found..");
         }
-
     }
 
     public void addVertex(Node V) {
